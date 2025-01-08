@@ -6,12 +6,10 @@ module.exports.index = async (req, res) => {
   try {
     const pageCurrent = req.query.page ? parseInt(req.query.page, 10) : 1;
     const status = req.query.status || null;
-    const parent_id = req.query.parent_id || null;
     const limitItem = 5;
 
     let find = { deleted: false };
     if (status) find.status = status;
-    if (parent_id) find.parent_id = parent_id;
 
     // 🔢 **Phân Trang**
     const totalItem = await Category.countDocuments(find);
@@ -49,24 +47,10 @@ module.exports.index = async (req, res) => {
         },
       },
       {
-        $lookup: {
-          from: "products-category",
-          localField: "parent_id",
-          foreignField: "_id",
-          as: "parentCategory",
-        },
-      },
-      {
         $addFields: {
           minPrice: { $min: "$products.price" },
           maxPrice: { $max: "$products.price" },
           productCount: { $size: "$products" },
-        },
-      },
-      {
-        $unwind: {
-          path: "$parentCategory",
-          preserveNullAndEmptyArrays: true,
         },
       },
       {
@@ -79,10 +63,10 @@ module.exports.index = async (req, res) => {
         $project: {
           products: 0, // Ẩn mảng products
           "createdBy.password": 0,
-          "parentCategory.products": 0,
         },
       },
     ]);
+
     // 📝 **Render Giao Diện**
     res.render("admin/pages/category/index", {
       title: "Shop của tôi",
@@ -91,7 +75,6 @@ module.exports.index = async (req, res) => {
       categories: categories,
       pagination: objectPagination,
       currentStatus: status,
-      parentId: parent_id,
       earliestCategories: earliestCategories,
     });
   } catch (error) {
@@ -100,6 +83,7 @@ module.exports.index = async (req, res) => {
     res.redirect("/admin/categories");
   }
 };
+
 
 module.exports.create = async (req, res) => {
   try {
@@ -230,7 +214,6 @@ module.exports.edit = async (req, res) => {
 
     // 🔍 Tìm danh mục dựa trên slug và populate thông tin liên quan
     const category = await Category.findOne({ slug })
-      .populate("parent_id", "title")
       .populate("createdBy", "fullName") // Lấy tên đầy đủ của người tạo
       .lean();
 
@@ -239,37 +222,11 @@ module.exports.edit = async (req, res) => {
       return res.redirect("back");
     }
 
+    // 🔍 Truy vấn danh mục không còn liên quan đến parent_id
     const categories = await Category.aggregate([
       {
         $match: {
           deleted: false,
-          parent_id: null,
-        },
-      },
-      {
-        $graphLookup: {
-          from: "products-category",
-          startWith: "$_id",
-          connectFromField: "_id",
-          connectToField: "parent_id",
-          as: "children",
-          maxDepth: 1,
-        },
-      },
-      {
-        $addFields: {
-          children: {
-            $filter: {
-              input: "$children",
-              as: "child",
-              cond: {
-                $and: [
-                  { $eq: ["$$child.deleted", false] },
-                  { $not: [{ $ifNull: ["$$child.seller_id", false] }] },
-                ],
-              },
-            },
-          },
         },
       },
     ]);
@@ -280,7 +237,7 @@ module.exports.edit = async (req, res) => {
       titleTopbar: "EDIT CATEGORY",
       category,
       productsCategory: categories,
-      slug: slug
+      slug: slug,
     });
   } catch (error) {
     console.error("Error loading category edit page:", error);
@@ -301,7 +258,6 @@ module.exports.editPatch = async (req, res) => {
       position: isNaN(parseInt(req.body.position))
         ? 0
         : parseInt(req.body.position),
-      parent_id: req.body.parent_id || null, // Cho phép null nếu không có danh mục cha
     };
 
     // 🖼️ Nếu có thumbnail, thêm vào dữ liệu cập nhật
