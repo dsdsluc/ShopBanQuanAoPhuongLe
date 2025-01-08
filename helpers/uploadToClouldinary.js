@@ -23,7 +23,8 @@ cloudinary.config({
   cloud_name: process.env.CLOUD_NAME, 
   signature: signature,
   api_key: process.env.CLOUD_KEY, 
-  api_secret: process.env.CLOUD_SECRET 
+  api_secret: process.env.CLOUD_SECRET,
+  cdn_subdomain: true
 });
 
 // 📥 **Stream Upload Function**
