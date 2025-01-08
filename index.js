@@ -11,8 +11,6 @@ const port = process.env.PORT;
 const routerClient = require("./routers/clients/index.router");
 const routerAdmin = require("./routers/admin/index.router");
 const path = require('path');
-const http = require('http');
-const { Server } = require("socket.io");
 
 
 
@@ -27,10 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 const database = require("./configs/database");
 database.connect();
 
-//Socket IO
-const server = http.createServer(app);
-const io = new Server(server);
-global._io = io;
+
 
 
 // Flash
@@ -56,6 +51,6 @@ app.set('view engine', 'pug');
 
 app.locals.prefixAdmin = system.prefixAdmin
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
