@@ -1,0 +1,33 @@
+section#home-reviews
+  .review-main
+    h2.review-title.active
+      span.review-title-1 Đánh Giá
+      span.review-title-2 Từ Khách Hàng
+    p.review-desc KHÁCH HÀNG CHÚNG TÔI NÓI GÌ
+    .review-container
+      // Review 1
+      .home-review
+        .review-content
+          img.review-avt(src="/clients/img/index-avatar-1.jpg" alt="")
+          img.review-icon(src="/clients/icon/index-review.svg" alt="")
+          p.review-script
+            | "Mình rất thích chiếc váy dạ tiệc của MUSE. Chất liệu mềm mại, thoáng mát và thiết kế cực kỳ sang trọng. Sau khi mặc đi dự tiệc, mình nhận được rất nhiều lời khen từ bạn bè và cảm thấy rất tự tin. Thực sự tuyệt vời!"
+      // Review 2
+      .home-review
+        .review-content
+          img.review-avt(src="/clients/img/index-avatar-2.jpg" alt="")
+          img.review-icon(src="/clients/icon/review.svg" alt="")
+          p.review-script
+            | "Áo sơ mi của MUSE là lựa chọn hoàn hảo cho công việc hằng ngày của mình. Thiết kế thanh lịch, đường may tỉ mỉ, và chất liệu không nhăn giúp mình luôn cảm thấy thoải mái và chuyên nghiệp cả ngày dài. Highly recommend!"
+      // Review 3
+      .home-review
+        .review-content
+          img.review-avt(src="/clients/img/index-avatar-3.jpg" alt="" onload="loadReview()")
+          img.review-icon(src="/clients/icon/review.svg" alt="")
+          p.review-script
+            | "Mình đã mua một chiếc áo khoác từ MUSE, và đây là chiếc áo khoác yêu thích nhất của mình. Kiểu dáng trẻ trung, màu sắc thời thượng, và chất liệu giữ ấm cực kỳ tốt. Đặc biệt, dịch vụ giao hàng nhanh chóng và đóng gói cẩn thận. Rất hài lòng!"
+  // 3 dots
+  .dot-container-review
+    .dot-review.active
+    .dot-review
+    .dot-review
