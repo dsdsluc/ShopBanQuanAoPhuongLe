@@ -1,7 +1,6 @@
 const Category = require("../../models/products-category.model");
 const paginationHelper = require("../../helpers/pagination");
 
-
 module.exports.index = async (req, res) => {
   try {
     const pageCurrent = req.query.page ? parseInt(req.query.page, 10) : 1;
@@ -84,17 +83,16 @@ module.exports.index = async (req, res) => {
   }
 };
 
-
 module.exports.create = async (req, res) => {
   try {
-    const categories = await Category.find() || [];
+    const categories = (await Category.find()) || [];
 
     res.render("admin/pages/category/create", {
       title: "Shop của tôi",
       message: "Hello there!",
       titleTopbar: "Category Create",
       productsCategory: categories,
-      countCategories:  categories.length + 1
+      countCategories: categories.length + 1,
     });
   } catch (error) {
     console.error(error);
@@ -102,7 +100,6 @@ module.exports.create = async (req, res) => {
     res.redirect("/admin/dashboard");
   }
 };
-
 
 module.exports.createPost = async (req, res) => {
   try {
@@ -118,19 +115,17 @@ module.exports.createPost = async (req, res) => {
     // Tính toán position nếu không có
     const position = data.position || (await Category.countDocuments()) + 1;
 
-
     // Tạo danh mục mới
     const newCategory = new Category({
       title: data.title.trim(),
       description: data.description?.trim() || "",
       status: data.status,
       isFeatured: data.isFeatured === "true" || false,
-      isMostLiked: data.isMostLiked === "true" || false, 
+      isMostLiked: data.isMostLiked === "true" || false,
       position,
       createdBy: user._id,
       thumbnail: req.body.thumbnail,
     });
-    
 
     // Lưu danh mục mới
     await newCategory.save();
@@ -170,22 +165,17 @@ module.exports.detail = async (req, res) => {
   }
 };
 
-
 module.exports.changeStatus = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     let { status } = req.body;
     if (status == "active") {
-      status = "inactive"
+      status = "inactive";
     } else {
-      status = "active"
+      status = "active";
     }
 
-    
-    const result = await Category.updateOne(
-      { _id: id }, 
-      { $set: { status } } 
-    );
+    const result = await Category.updateOne({ _id: id }, { $set: { status } });
 
     if (result.modifiedCount > 0) {
       req.flash("success", "Cập nhật trạng thái thành công.");
@@ -248,7 +238,7 @@ module.exports.edit = async (req, res) => {
 
 module.exports.editPatch = async (req, res) => {
   try {
-    const { slug } = req.params; 
+    const { slug } = req.params;
 
     // 🛡️ Xử lý và chuẩn hóa dữ liệu từ form
     const updateData = {
@@ -258,6 +248,8 @@ module.exports.editPatch = async (req, res) => {
       position: isNaN(parseInt(req.body.position))
         ? 0
         : parseInt(req.body.position),
+      isFeatured: req.body.isFeatured === "true" || false,
+      isMostLiked: req.body.isMostLiked === "true" || false,
     };
 
     // 🖼️ Nếu có thumbnail, thêm vào dữ liệu cập nhật
@@ -273,9 +265,9 @@ module.exports.editPatch = async (req, res) => {
 
     // 🔄 Tìm và cập nhật danh mục dựa trên slug
     const updatedCategory = await Category.findOneAndUpdate(
-      { slug }, 
-      updateData, 
-      { new: true, runValidators: true } 
+      { slug },
+      updateData,
+      { new: true, runValidators: true }
     );
     if (!updatedCategory) {
       req.flash("error", "Category not found.");
@@ -295,22 +287,21 @@ module.exports.deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    
     const category = await Category.findById(id);
 
     if (!category) {
-      req.flash('error', 'Category not found.');
-      return res.redirect('/admin/category/list');
+      req.flash("error", "Category not found.");
+      return res.redirect("/admin/category/list");
     }
 
     // Xóa danh mục
     await Category.findByIdAndDelete(id);
 
-    req.flash('success', 'Category deleted successfully.');
-    res.redirect('/admin/category/list'); 
+    req.flash("success", "Category deleted successfully.");
+    res.redirect("/admin/category/list");
   } catch (error) {
     console.error(error);
-    req.flash('error', 'An error occurred while deleting the category.');
-    res.redirect('/admin/category/list');
+    req.flash("error", "An error occurred while deleting the category.");
+    res.redirect("/admin/category/list");
   }
 };
