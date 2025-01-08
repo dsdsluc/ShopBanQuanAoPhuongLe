@@ -1,27 +1,11 @@
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
-const crypto = require('crypto');
 
 
-const params = {
-  folder: "ShopBanHangPhuongLe",
-  timestamp: Math.floor(Date.now() / 1000), 
-};
-
-const stringToSign = Object.keys(params)
-  .sort() 
-  .map((key) => `${key}=${params[key]}`) 
-  .join("&"); 
-
-  const signature = crypto
-  .createHash("sha256")
-  .update(stringToSign + process.env.CLOUD_SECRET) 
-  .digest("hex");
 
 // 🔑 **Cấu hình Cloudinary**
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME, 
-  signature: signature,
+  cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_KEY, 
   api_secret: process.env.CLOUD_SECRET,
   cdn_subdomain: true
