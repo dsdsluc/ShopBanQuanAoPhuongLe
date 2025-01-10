@@ -291,7 +291,7 @@ module.exports.checkout = async (req, res) => {
 
 module.exports.checkoutPost = async (req, res) => {
   try {
-    const { recipientName, phoneNumber, address, paymentMethod, coupon_id, customerNote } = req.body;
+    const { recipientName, phoneNumber, address, paymentMethod, couponCode, customerNote } = req.body;
     const cartId = req.cookies.cartId;
     const user_id = res.locals.user?._id;
 
@@ -334,8 +334,8 @@ module.exports.checkoutPost = async (req, res) => {
     let discount = 0;
     let couponDetails = null;
 
-    if (coupon_id) {
-      const coupon = await Coupon.findOne({code:coupon_id});
+    if (couponCode) {
+      const coupon = await Coupon.findOne({code:couponCode});
       if (coupon) {
         discount = coupon.discount_type === 'percentage'
           ? Math.round((totalPrice * coupon.discount_value) / 100)
