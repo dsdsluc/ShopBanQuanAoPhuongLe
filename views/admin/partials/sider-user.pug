@@ -21,7 +21,8 @@ if( role.permissions.includes("role-view"))
             li.sub-nav-item
               a.sub-nav-link(href=href=`/${prefixAdmin}/role/create`) Create
 
-if( role.permissions.includes("role-permission"))
+
+if( role.permissions.includes("role-permissions"))
   li.nav-item
     a.nav-link(href=`/${prefixAdmin}/permission/list`)
       span.nav-icon

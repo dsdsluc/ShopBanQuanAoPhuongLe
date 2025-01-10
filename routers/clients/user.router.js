@@ -9,9 +9,8 @@ const upload = multer();
 
 router.get('/', controller.index);
 
-router.post('/update-profile',upload.single('avatar'),uploadMiddleware, controller.updateProfile);
+router.post('/update-profile', controller.updateProfile);
 
-router.post('/support-tickets', controller.supportTicketPost);
 
 
 

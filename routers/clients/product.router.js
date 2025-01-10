@@ -11,7 +11,5 @@ router.get('/detail/:slug', controller.detail);
 
 router.get('/category/:slug', controller.category);
 
-router.patch('/wishlist',requireAuthMiddelware.requireAuth, controller.wishlistPatch);
-
 
 module.exports = router

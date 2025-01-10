@@ -7,7 +7,6 @@ const contactRouters = require("./contact.router");
 const cartRouters = require("./cart.router");
 const authRouters = require("./auth.router");
 const orderRouters = require("./order.router");
-const walletRouters = require("./wallet.router");
 const favoriteRouters = require("./favorite.router");
 
 const cartMiddleware = require("../../middlewares/client/cart.middleware");
@@ -41,7 +40,7 @@ module.exports = (app)=>{
 
     app.use('/blogs', blogRouters);
 
-    app.use('/user', userRouters);
+    app.use('/user',userMiddleware.requireLogin, userRouters);
 
     app.use('/contact', contactRouters);
 
@@ -51,5 +50,4 @@ module.exports = (app)=>{
 
     app.use('/auth', authRouters);
     
-    app.use('/wallet', walletRouters);
 }

@@ -25,51 +25,51 @@ main.main-inner
             b
               span.text Họ tên
               span.span *
-            input.box(type="text", value=user.fullName || '', required=true)
+            input.box(type="text", name="fullName", value=user.fullName || '', required=true)
           //- EMAIL
           div.input-box
             b
               span.text Email
               span.span *
-            input.box(type="email", value=user.email || '')
+            input.box(type="email", name="email", value=user.email || '', required=true)
           //- GENDER
           div.input-box
             b
               span.text Giới tính
               span.span *
-            select.box(required=true)
+            select.box(name="gender" required=true)
               option(value="Male" selected=(user.gender === 'Male') ? true : false) Nam
               option(value="Female" selected=(user.gender === 'Female') ? true : false) Nữ
               option(value="Other" selected=(user.gender === 'Other') ? true : false) Khác
-          //- NUMBER
+          //- PHONE NUMBER
           div.input-box
             b
               span.text Số điện thoại
               span.span *
-            input.box(type="text", pattern="[0-9]{10}", title="Vui lòng nhập đủ 10 số", value=user.phone || '', required=true)
+            input.box(type="text", name="phone", pattern="[0-9]{10}", title="Vui lòng nhập đủ 10 số", value=user.phone || '', required=true)
           //- DOB
           div.input-box
             b
               span.text Ngày sinh
               span.span *
-            input(type="date", value=(user.dob ? user.dob.toISOString().split('T')[0] : ''), required=true)
+            input(type="date", name="dob", value=(user.dob ? user.dob.toISOString().split('T')[0] : ''), required=true)
           //- ADDRESS
           div.input-box
             b
               span.text Địa chỉ
-            input(type="text", value=user.address || '')
+            input(type="text", name="address", value=user.address || '')
           //- USERNAME
           div.input-box
             b
               span.text Tên đăng nhập
               span.span *
-            input(type="text", name="ten_dang_nhap", value=user.username || '', required=true)
+            input(type="text", name="username", value=user.username || '', required=true)
           //- PASSWORD
           div.input-box
             b
               span.text Mật khẩu
               span.span *
-            input(type="password", name="mat_khau", value="", placeholder="******", required=true)
+            input(type="password", name="password", placeholder="******")
         //- Save Button
         div.button
           button.button-save

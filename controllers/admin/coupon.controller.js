@@ -83,8 +83,6 @@ module.exports.createPost = async (req, res) => {
             return res.redirect("back");
         }
 
-        
-
         // 🔄 Chuyển đổi kiểu dữ liệu Boolean
         const isCombinable = is_combinable === 'true';
         const isActive = is_active === 'true';

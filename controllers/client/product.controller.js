@@ -1,7 +1,6 @@
 const ProductCategory = require("../../models/products-category.model");
 const Product = require("../../models/product.model");
 const Comment = require("../../models/comment.model");
-const Wishlist = require("../../models/wishlist.model");
 const paginationHelper = require("../../helpers/pagination");
 
 const productHelper = require("../../helpers/product");
@@ -185,84 +184,4 @@ module.exports.category = async (req, res) => {
     message: "Hello there!",
     products: newProducts,
   });
-};
-
-module.exports.wishlistPatch = async (req, res) => {
-  try {
-    const user = res.locals.user;
-
-    const { product_id, action } = req.body;
-
-    // Ensure the product ID is provided
-    if (!product_id) {
-      return res.status(400).json({ error: "Product ID is required" });
-    }
-
-    // Check if the product exists
-    const product = await Product.findById(product_id);
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-
-    // Retrieve the user's wishlist
-    let wishlist = await Wishlist.findOne({ user_id: user.id });
-
-    // If no wishlist exists, create a new one
-    if (!wishlist) {
-      wishlist = new Wishlist({ user_id: user.id, products: [] });
-    }
-
-    // Handle different actions
-    if (action === "add") {
-      if (
-        wishlist.products.some(
-          (item) => item.product_id.toString() === product_id
-        )
-      ) {
-        req.flash("error", "Product is already in your wishlist.");
-        return res.redirect("back");
-      }
-      wishlist.products.push({ product_id });
-      await wishlist.save();
-      req.flash("success", "Product added to wishlist.");
-      return res.redirect("back");
-    }
-
-    if (action === "remove") {
-      const productIndex = wishlist.products.findIndex(
-        (item) => item.product_id.toString() === product_id
-      );
-      if (productIndex === -1) {
-        req.flash("error", "Product not found in your wishlist.");
-        return res.redirect("back");
-      }
-      wishlist.products.splice(productIndex, 1);
-      await wishlist.save();
-      return res
-        .status(200)
-        .json({ message: "Product removed from wishlist", wishlist });
-    }
-
-    if (action === "update") {
-      // For example, we can update the quantity of the product if it's an array (but for now, we'll leave it simple)
-      const productIndex = wishlist.products.findIndex(
-        (item) => item.product_id.toString() === product_id
-      );
-      if (productIndex === -1) {
-        req.flash("error", "Product not found in your wishlist.");
-        return res.redirect("back");
-      }
-      // Example update: In real case, you might update quantity or other details here
-      wishlist.products[productIndex] = { product_id };
-      await wishlist.save();
-      req.flash("success", "Product updated in wishlist.");
-      return res.redirect("back");
-    }
-
-    // If action is not recognized, return an error
-    return res.status(400).json({ error: "Invalid action" });
-  } catch (error) {
-    console.error("Error in wishlistPatch:", error);
-    res.status(500).json({ error: "Server error" });
-  }
 };

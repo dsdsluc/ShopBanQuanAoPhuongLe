@@ -25,26 +25,43 @@ module.exports.index = async (req, res) => {
 
     // 🔍 **Truy Vấn Danh Mục**
     const categories = await Category.aggregate([
+      // 1. Lọc các bản ghi ngay từ đầu
       { $match: find },
+    
+      // 2. Sắp xếp theo vị trí
       { $sort: { position: 1 } },
+    
+      // 3. Phân trang (thực hiện trước khi lookup để giảm dữ liệu)
       { $skip: objectPagination.skip },
       { $limit: objectPagination.limitItem },
+    
+      // 4. Lookup liên kết sản phẩm (chỉ lấy trường cần thiết)
       {
         $lookup: {
           from: "products",
-          localField: "_id",
-          foreignField: "product_category_id",
+          let: { categoryId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$product_category_id", "$$categoryId"] } } },
+            { $project: { price: 1 } }, // Chỉ lấy trường `price`
+          ],
           as: "products",
         },
       },
+    
+      // 5. Lookup liên kết tài khoản (giảm bớt dữ liệu trả về)
       {
         $lookup: {
           from: "accounts",
-          localField: "createdBy",
-          foreignField: "_id",
+          let: { createdBy: "$createdBy" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$createdBy"] } } },
+            { $project: { password: 0 } }, // Loại bỏ trường nhạy cảm `password`
+          ],
           as: "createdBy",
         },
       },
+    
+      // 6. Thêm các trường tính toán
       {
         $addFields: {
           minPrice: { $min: "$products.price" },
@@ -52,19 +69,36 @@ module.exports.index = async (req, res) => {
           productCount: { $size: "$products" },
         },
       },
+    
+      // 7. Unwind tài khoản (nếu cần tách mảng createdBy)
       {
         $unwind: {
           path: "$createdBy",
           preserveNullAndEmptyArrays: true, // Giữ lại nếu không có kết quả
         },
       },
+    
+      // 8. Projection chỉ giữ lại các trường cần thiết
       {
         $project: {
-          products: 0, // Ẩn mảng products
-          "createdBy.password": 0,
+          title: 1,
+          slug: 1,
+          description: 1,
+          thumbnail: 1,
+          isFeatured: 1,
+          isMostLiked: 1,
+          status: 1,
+          position: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          createdBy: 1, 
+          minPrice: 1,
+          maxPrice: 1,
+          productCount: 1,
         },
       },
     ]);
+    
 
     // 📝 **Render Giao Diện**
     res.render("admin/pages/category/index", {

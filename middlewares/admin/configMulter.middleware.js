@@ -10,6 +10,4 @@ module.exports = upload.fields([
   { name: 'featuredCategories[0][image]', maxCount: 1 },
   { name: 'featuredCategories[1][image]', maxCount: 1 },
   { name: 'featuredCategories[2][image]', maxCount: 1 },
-  { name: 'advs[0][image]', maxCount: 1 },
-  { name: 'advs[1][image]', maxCount: 1 },
 ]);

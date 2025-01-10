@@ -9,7 +9,6 @@ const permissionRoute = require("./permission.router");
 const accountRoute = require("./account.router");
 const couponRoute = require("./coupon.router");
 const orderRoute = require("./order.router");
-const transitionRoute = require("./transition.router");
 const settingRoute = require("./setting.router");
 const pageRoute = require("./page.router");
 const customerRoute = require("./customer.router");
@@ -43,7 +42,6 @@ module.exports = (app)=>{
     
     app.use( PATH_ADMIN +"/order",authMiddleware.requireAuth,  orderRoute)
 
-    app.use( PATH_ADMIN +"/transition",authMiddleware.requireAuth,  transitionRoute)
 
     app.use( PATH_ADMIN +"/page",authMiddleware.requireAuth,  pageRoute)
 
