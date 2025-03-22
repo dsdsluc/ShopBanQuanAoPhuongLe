@@ -375,8 +375,7 @@ module.exports.checkoutPost = async (req, res) => {
 
     const emailHTML = emailHelper.generateOrderEmailHTML(newOrder);
     emailHelper.sendMail("phuonglemuseshop@gmail.com", 'Thông báo đơn hàng', emailHTML);
-    emailHelper.sendMail(res.locals.user.email, 'Thông báo đơn hàng', emailHTML);
-
+    
     req.flash('success', 'Đơn hàng của bạn đã được đặt thành công!');
     res.redirect(`/order/detail/${newOrder._id}`);
   } catch (error) {
